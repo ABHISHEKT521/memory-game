@@ -1,61 +1,105 @@
-var playerChoice=document.getElementById("playerchoice");
-var computerChoice=document.getElementById("computerchoice");
-var resultview=document.getElementById("result");
+const griddisplay = document.querySelector('#grid');
+const resultdisplay = document.querySelector("#score")
 
-
-var possibleChoices=document.querySelectorAll('button');
-
-possibleChoices.forEach(possibleChoices=>possibleChoices.addEventListener('click',
-    (e)=>{
-        playerselection=e.target.id;
-        playerChoice.innerHTML=playerselection;
-        botchoice();
-        results()
-
-    }
-))
-
-function botchoice(){
-    var randomNumber=Math.floor(Math.random()*3)+1
-    if(randomNumber === 1)
+const cardArray = [
     {
-        bot="ROCK";
-    }
-    if(randomNumber===2)
+        name:"ace_heart",
+        img:"images/ace_heart.png"
+    },{
+        name:"ace_diamond",
+        img:"images/ace_diamond1.png"
+    },{
+        name:"ace_spade",
+        img:"images/ace_spade.png"
+    },{
+        name:"k_diamond",
+        img:"images/king-diamonds.png"
+    },{
+        name:"k_heart",
+        img:"images/king-hearts.png"
+    },{
+        name:"k_spade",
+        img:"images/king_spade.jpg"
+    },
     {
-        bot="PAPER";
+        name:"ace_heart",
+        img:"images/ace_heart.png"
+    },{
+        name:"ace_diamond",
+        img:"images/ace_diamond1.png"
+    },{
+        name:"ace_spade",
+        img:"images/ace_spade.png"
+    },{
+        name:"k_diamond",
+        img:"images/king-diamonds.png"
+    },{
+        name:"k_heart",
+        img:"images/king-hearts.png"
+    },{
+        name:"k_spade",
+        img:"images/king_spade.jpg"
     }
-    if(randomNumber===3)
-    {
-        bot="SCISSORS"
-    }
-    computerChoice.innerHTML=bot;
+]
 
+cardArray.sort(() => 0.5 - Math.random())
+
+generateboard();
+
+function generateboard(){
+    for(let i=0; i<cardArray.length; i++)
+    {
+        const card = document.createElement('img');
+        card.setAttribute('src','images/bg.jpg');
+        card.setAttribute('data-id',i);
+        card.addEventListener('click',flipcard);
+        griddisplay.appendChild(card);
+        
+    }
+    console.log(cardArray);
 }
 
-function results(){
-    if(playerselection===bot){
-        result="  OOPS,IT'S A TIE. TRY AGAIN"
-    }
-    if(playerselection==="ROCK"&&bot==="PAPER"){
-        result="Bot Wins"
-    }
-    if(playerselection==="SCISSORS"&&bot==="ROCK"){
-        result="Bot Wins"
-    }
-    if(playerselection==="PAPER"&&bot==="SCISSORS"){
-        result="Bot Wins"
+card_chosen = [];
+card_chosen_id = [];
+
+function flipcard(){
+    const card_id = this.getAttribute("data-id");
+    this.setAttribute('src',cardArray[card_id].img);
+    card_chosen_id.push(card_id);
+    card_chosen.push(cardArray[card_id].name);
+
+    if(card_chosen.length === 2)
+    {
+        setTimeout(checkmatch,500);
     }
     
+}
 
-    if(playerselection==="PAPER"&&bot==="ROCK"){
-        result="Player Wins"
+cardsWon = []
+function checkmatch(){
+    const cards = document.querySelectorAll('img');
+
+    if(card_chosen[0] == card_chosen[1])
+    {
+        alert("You have found a match");
+        cards[card_chosen_id[0]].setAttribute('src','images/done.png');
+        cards[card_chosen_id[1]].setAttribute('src','images/done.png');
+        cards[card_chosen_id[0]].removeEventListener('click',flipcard);
+        cards[card_chosen_id[1]].removeEventListener('click',flipcard);
+        cardsWon.push(card_chosen);
+        resultdisplay.innerHTML = cardsWon.length;
     }
-    if(playerselection==="ROCK"&&bot==="SCISSORS"){
-        result="Player Wins"
+    else{
+        cards[card_chosen_id[0]].setAttribute('src','images/bg.jpg')
+        cards[card_chosen_id[1]].setAttribute('src','images/bg.jpg')
     }
-    if(playerselection==="SCISSORS"&&bot==="PAPER"){
-        result="Player Wins"
-    }
-    resultview.innerHTML=result;
+
+    card_chosen = [];
+    card_chosen_id = [];
+
+    if(cardsWon.length == cardArray.length/2)
+        {
+            resultdisplay.innerHTML = "Congratulation.. You have successfully completed the game"
+        }
+
 }
